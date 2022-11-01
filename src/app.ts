@@ -1,7 +1,4 @@
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
+import { env } from "./env";
 import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -9,7 +6,7 @@ import morgan from "morgan";
 import compression from "compression";
 
 const app: Express = express();
-const port = parseInt(process.env.NUMBER);
+const port = env.PORT;
 
 const initializeMiddleware = () => {
   app.use(helmet());
