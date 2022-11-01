@@ -2,6 +2,8 @@ import express, { Express } from "express";
 
 const app: Express = express();
 
+const initializeMiddleware = () => {};
+
 const start = (): void => {
   try {
     app.listen(3000, () => {
