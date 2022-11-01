@@ -1,3 +1,7 @@
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -5,6 +9,7 @@ import morgan from "morgan";
 import compression from "compression";
 
 const app: Express = express();
+const port = parseInt(process.env.NUMBER);
 
 const initializeMiddleware = () => {
   app.use(helmet());
@@ -15,10 +20,11 @@ const initializeMiddleware = () => {
   app.use(compression());
 };
 
-const start = (): void => {
+const start = (port: number = 3000): void => {
   try {
-    app.listen(3000, () => {
-      console.log(`App listening on port ${3000}`);
+    initializeMiddleware();
+    app.listen(port, () => {
+      console.log(`App listening on port ${port}`);
     });
   } catch (error) {
     console.error(error);
@@ -26,4 +32,4 @@ const start = (): void => {
   }
 };
 
-start();
+start(port);
