@@ -1,4 +1,6 @@
 import * as dotenv from "dotenv";
+import NodeEnvEnum from "./resources/enums/nodeEnv.enum";
+import LoggingLevelEnum from "./resources/enums/loggingLevels.enum";
 dotenv.config();
 
 import { z } from "zod";

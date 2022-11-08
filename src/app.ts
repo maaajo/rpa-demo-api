@@ -1,5 +1,5 @@
 import config from "./config/config";
-import express, { Express } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
@@ -20,6 +20,15 @@ const initializeMiddleware = () => {
 const start = (port: Number): void => {
   try {
     initializeMiddleware();
+
+    app.get("/", (req: Request, res: Response, next: NextFunction) => {
+      res.send("Hello World");
+    });
+
+    app.post("/test", (req: Request, res: Response, next: NextFunction) => {
+      res.send("Hello World");
+    });
+
     app.listen(port, () => {
       console.log(`App listening on port ${port}`);
     });
