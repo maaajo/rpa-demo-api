@@ -6,7 +6,11 @@ import { z } from "zod";
 const envSchema = z.object({
   // DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
-  PORT: z.string().transform(Number),
+  DEV_PORT: z.string().transform(Number),
+  APP_PORT: z.string().transform(Number),
+  SECRET_KEY: z.string().min(20),
+  LOGGING_DIR: z.string(),
+  LOGGING_LEVEL: z.enum(["combined", "common", "dev", "short", "tiny"]),
 });
 
 const result = envSchema.safeParse(process.env);

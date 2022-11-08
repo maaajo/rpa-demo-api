@@ -1,4 +1,4 @@
-import { env } from "./env";
+import config from "./config/config";
 import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -6,18 +6,18 @@ import morgan from "morgan";
 import compression from "compression";
 
 const app: Express = express();
-const port = env.PORT;
+const port = config.port;
 
 const initializeMiddleware = () => {
   app.use(helmet());
   app.use(cors());
-  app.use(morgan("common"));
+  app.use(morgan(config.logging.level));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(compression());
 };
 
-const start = (port: number = 3000): void => {
+const start = (port: Number): void => {
   try {
     initializeMiddleware();
     app.listen(port, () => {
