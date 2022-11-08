@@ -6,12 +6,12 @@ import morgan from "morgan";
 import compression from "compression";
 
 const app: Express = express();
-const port = config.port;
+const { port, host, logging } = config;
 
 const initializeMiddleware = () => {
   app.use(helmet());
   app.use(cors());
-  app.use(morgan(config.logging.level));
+  app.use(morgan(logging.level));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(compression());
@@ -21,16 +21,8 @@ const start = (port: Number): void => {
   try {
     initializeMiddleware();
 
-    app.get("/", (req: Request, res: Response, next: NextFunction) => {
-      res.send("Hello World");
-    });
-
-    app.post("/test", (req: Request, res: Response, next: NextFunction) => {
-      res.send("Hello World");
-    });
-
     app.listen(port, () => {
-      console.log(`App listening on port ${port}`);
+      console.log(`App is listening on ${host}:${port}`);
     });
   } catch (error) {
     console.error(error);

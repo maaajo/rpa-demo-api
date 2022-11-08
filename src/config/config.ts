@@ -2,6 +2,7 @@ import { env } from "../env";
 
 export default {
   name: "rpa-demo-api",
+  host: env.APP_HOST || "http://localhost",
   version: "1.0",
   environment: env.NODE_ENV || "development",
   port: env.NODE_ENV === "development" ? env.DEV_PORT : env.APP_PORT,

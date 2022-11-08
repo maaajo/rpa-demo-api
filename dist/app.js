@@ -10,11 +10,11 @@ const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const compression_1 = __importDefault(require("compression"));
 const app = (0, express_1.default)();
-const port = config_1.default.port;
+const { port, host, logging } = config_1.default;
 const initializeMiddleware = () => {
     app.use((0, helmet_1.default)());
     app.use((0, cors_1.default)());
-    app.use((0, morgan_1.default)(config_1.default.logging.level));
+    app.use((0, morgan_1.default)(logging.level));
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use((0, compression_1.default)());
@@ -22,14 +22,8 @@ const initializeMiddleware = () => {
 const start = (port) => {
     try {
         initializeMiddleware();
-        app.get("/", (req, res, next) => {
-            res.send("Hello World");
-        });
-        app.post("/test", (req, res, next) => {
-            res.send("Hello World");
-        });
         app.listen(port, () => {
-            console.log(`App listening on port ${port}`);
+            console.log(`App is listening on ${host}:${port}`);
         });
     }
     catch (error) {

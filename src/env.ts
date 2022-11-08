@@ -1,6 +1,4 @@
 import * as dotenv from "dotenv";
-import NodeEnvEnum from "./resources/enums/nodeEnv.enum";
-import LoggingLevelEnum from "./resources/enums/loggingLevels.enum";
 dotenv.config();
 
 import { z } from "zod";
@@ -13,6 +11,7 @@ const envSchema = z.object({
   SECRET_KEY: z.string().min(20),
   LOGGING_DIR: z.string(),
   LOGGING_LEVEL: z.enum(["combined", "common", "dev", "short", "tiny"]),
+  APP_HOST: z.string().url(),
 });
 
 const result = envSchema.safeParse(process.env);

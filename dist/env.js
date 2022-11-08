@@ -35,6 +35,7 @@ const envSchema = zod_1.z.object({
     SECRET_KEY: zod_1.z.string().min(20),
     LOGGING_DIR: zod_1.z.string(),
     LOGGING_LEVEL: zod_1.z.enum(["combined", "common", "dev", "short", "tiny"]),
+    APP_HOST: zod_1.z.string().url(),
 });
 const result = envSchema.safeParse(process.env);
 if (!result.success) {

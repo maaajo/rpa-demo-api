@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const env_1 = require("../env");
 exports.default = {
     name: "rpa-demo-api",
+    host: env_1.env.APP_HOST || "http://localhost",
     version: "1.0",
     environment: env_1.env.NODE_ENV || "development",
     port: env_1.env.NODE_ENV === "development" ? env_1.env.DEV_PORT : env_1.env.APP_PORT,
