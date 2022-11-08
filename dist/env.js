@@ -28,7 +28,7 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const zod_1 = require("zod");
 const envSchema = zod_1.z.object({
-    // DATABASE_URL: z.string().url(),
+    DATABASE_URL: zod_1.z.string().url(),
     NODE_ENV: zod_1.z.enum(["development", "test", "production"]),
     DEV_PORT: zod_1.z.string().transform(Number),
     APP_PORT: zod_1.z.string().transform(Number),
