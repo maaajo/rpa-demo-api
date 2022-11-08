@@ -20,7 +20,7 @@
     "express": "^4.18.1",
     "helmet": "^6.0.0",
     "morgan": "^1.10.0",
-    "prisma": "^4.4.0",
+    "prisma": "^4.6.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
