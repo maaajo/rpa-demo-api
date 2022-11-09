@@ -1,15 +1,15 @@
+import { TypedResponse } from "../interfaces/typedResponse.interface";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 
 export default function notFound(
   req: Request,
-  res: Response,
+  res: TypedResponse,
   next: NextFunction
 ) {
   res.status(StatusCodes.NOT_FOUND).json({
-    error: {
-      code: StatusCodes.NOT_FOUND,
-      message: ReasonPhrases.NOT_FOUND,
-    },
+    code: StatusCodes.NOT_FOUND,
+    error: ReasonPhrases.NOT_FOUND,
+    success: false,
   });
 }
