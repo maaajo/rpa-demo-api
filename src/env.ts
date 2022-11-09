@@ -13,7 +13,7 @@ const envSchema = z.object({
   DATABASE_PORT: z.string(),
   DATABASE_NAME: z.string(),
   DATABASE_SCHEMA_NAME: z.string(),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   DEV_PORT: z.string().transform(Number),
   APP_PORT: z.string().transform(Number),

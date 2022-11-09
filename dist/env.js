@@ -25,10 +25,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
 const dotenv = __importStar(require("dotenv"));
-dotenv.config();
+const dotenvExpand = __importStar(require("dotenv-expand"));
+const myEnv = dotenv.config();
+dotenvExpand.expand(myEnv);
 const zod_1 = require("zod");
 const envSchema = zod_1.z.object({
-    DATABASE_URL: zod_1.z.string().url(),
+    DATABASE_USERNAME: zod_1.z.string(),
+    DATABASE_PASSWORD: zod_1.z.string(),
+    DATABASE_HOST: zod_1.z.string(),
+    DATABASE_PORT: zod_1.z.string(),
+    DATABASE_NAME: zod_1.z.string(),
+    DATABASE_SCHEMA_NAME: zod_1.z.string(),
+    DATABASE_URL: zod_1.z.string(),
     NODE_ENV: zod_1.z.enum(["development", "test", "production"]),
     DEV_PORT: zod_1.z.string().transform(Number),
     APP_PORT: zod_1.z.string().transform(Number),
