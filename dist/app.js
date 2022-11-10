@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const compression_1 = __importDefault(require("compression"));
 const notFound_middleware_1 = __importDefault(require("./middlewares/notFound.middleware"));
+const errorHandler_middleware_1 = __importDefault(require("./middlewares/errorHandler.middleware"));
 const app = (0, express_1.default)();
 const { port, host, logging } = config_1.default;
 const initializeMiddleware = () => {
@@ -19,11 +20,12 @@ const initializeMiddleware = () => {
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use((0, compression_1.default)());
-    app.use(notFound_middleware_1.default);
 };
 const start = (port) => {
     try {
         initializeMiddleware();
+        app.use(errorHandler_middleware_1.default);
+        app.use(notFound_middleware_1.default);
         app.listen(port, () => {
             console.log(`App is listening on ${host}:${port}`);
         });

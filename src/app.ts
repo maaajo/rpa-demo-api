@@ -5,6 +5,9 @@ import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
 import notFound from "./middlewares/notFound.middleware";
+import errorHandler from "./middlewares/errorHandler.middleware";
+import CustomException from "./utils/exceptions/http.exception";
+import { StatusCodes } from "http-status-codes";
 
 const app: Express = express();
 const { port, host, logging } = config;
@@ -16,12 +19,14 @@ const initializeMiddleware = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(compression());
-  app.use(notFound);
 };
 
 const start = (port: Number): void => {
   try {
     initializeMiddleware();
+
+    app.use(errorHandler);
+    app.use(notFound);
 
     app.listen(port, () => {
       console.log(`App is listening on ${host}:${port}`);
