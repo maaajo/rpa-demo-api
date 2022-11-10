@@ -1,13 +1,11 @@
 import config from "./config/config";
-import express, { Express, Request, Response, NextFunction } from "express";
+import express, { Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
 import notFound from "./middlewares/notFound.middleware";
 import errorHandler from "./middlewares/errorHandler.middleware";
-import CustomException from "./utils/exceptions/http.exception";
-import { StatusCodes } from "http-status-codes";
 
 const app: Express = express();
 const { port, host, logging } = config;
@@ -21,13 +19,18 @@ const initializeMiddleware = () => {
   app.use(compression());
 };
 
+const initializeExceptionHandling = () => {
+  // have to always comes last, right before app listen
+  // order matters in express
+  app.use(errorHandler);
+  app.use(notFound);
+};
+
 const start = (port: Number): void => {
   try {
     initializeMiddleware();
 
-    app.use(errorHandler);
-    app.use(notFound);
-
+    initializeExceptionHandling();
     app.listen(port, () => {
       console.log(`App is listening on ${host}:${port}`);
     });
