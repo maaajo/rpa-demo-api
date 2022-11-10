@@ -13,4 +13,5 @@ export default {
     dir: env.LOGGING_DIR || "logs",
     level: env.LOGGING_LEVEL || "common",
   },
+  mainApiRoute: "/api",
 };

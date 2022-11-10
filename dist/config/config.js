@@ -14,5 +14,6 @@ exports.default = {
         dir: env_1.env.LOGGING_DIR || "logs",
         level: env_1.env.LOGGING_LEVEL || "common",
     },
+    mainApiRoute: "/api",
 };
 //# sourceMappingURL=config.js.map

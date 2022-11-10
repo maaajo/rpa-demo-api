@@ -1,7 +1,7 @@
 import { Request, NextFunction } from "express";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import { TypedResponse } from "../interfaces/typedResponse.interface";
-import CustomException from "../utils/exceptions/http.exception";
+import CustomException from "../exceptions/http.exception";
 
 export default function errorHandler(
   err: CustomException,
