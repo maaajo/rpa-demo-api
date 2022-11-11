@@ -11,4 +11,4 @@ class CustomException extends Error {
   }
 }
 
-export default CustomException;
+export { CustomException };
