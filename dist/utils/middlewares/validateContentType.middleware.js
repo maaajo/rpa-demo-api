@@ -32,7 +32,7 @@ const validateContentType = (allowedContentTypes) => (req, res, next) => __await
     }
     catch (error) {
         const customError = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.UNSUPPORTED_MEDIA_TYPE, error);
-        next(error);
+        next(customError);
     }
 });
 exports.validateContentType = validateContentType;

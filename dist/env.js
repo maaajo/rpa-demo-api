@@ -45,6 +45,7 @@ const envSchema = zod_1.z.object({
     LOGGING_LEVEL: zod_1.z.enum(["combined", "common", "dev", "short", "tiny"]),
     APP_HOST: zod_1.z.string().url(),
 });
+console.log(process.env);
 const result = envSchema.safeParse(process.env);
 if (!result.success) {
     console.error("❌ Invalid environment variables: ", JSON.stringify(result.error.format(), null, 4));

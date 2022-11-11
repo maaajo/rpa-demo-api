@@ -23,6 +23,8 @@ const envSchema = z.object({
   APP_HOST: z.string().url(),
 });
 
+console.log(process.env);
+
 const result = envSchema.safeParse(process.env);
 
 if (!result.success) {
