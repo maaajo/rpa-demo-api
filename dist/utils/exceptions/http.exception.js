@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomException = void 0;
 class CustomException extends Error {
     constructor(status, message) {
         super(message);
@@ -7,5 +8,5 @@ class CustomException extends Error {
         this.message = message;
     }
 }
-exports.default = CustomException;
+exports.CustomException = CustomException;
 //# sourceMappingURL=http.exception.js.map

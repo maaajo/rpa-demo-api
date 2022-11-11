@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { AnyZodObject } from "zod";
 import { CustomException } from "../exceptions/http.exception";
 
-const validateRequest =
+const validateRequestBody =
   (schema: AnyZodObject) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const zodParseResult = await schema.safeParseAsync({
@@ -21,4 +21,4 @@ const validateRequest =
     }
   };
 
-export { validateRequest };
+export { validateRequestBody };
