@@ -30,12 +30,6 @@ const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 const zod_1 = require("zod");
 const envSchema = zod_1.z.object({
-    DATABASE_USERNAME: zod_1.z.string(),
-    DATABASE_PASSWORD: zod_1.z.string(),
-    DATABASE_HOST: zod_1.z.string(),
-    DATABASE_PORT: zod_1.z.string(),
-    DATABASE_NAME: zod_1.z.string(),
-    DATABASE_SCHEMA_NAME: zod_1.z.string(),
     DATABASE_URL: zod_1.z.string(),
     NODE_ENV: zod_1.z.enum(["development", "test", "production"]),
     DEV_PORT: zod_1.z.string().transform(Number),
@@ -45,7 +39,6 @@ const envSchema = zod_1.z.object({
     LOGGING_LEVEL: zod_1.z.enum(["combined", "common", "dev", "short", "tiny"]),
     APP_HOST: zod_1.z.string().url(),
 });
-console.log(process.env);
 const result = envSchema.safeParse(process.env);
 if (!result.success) {
     console.error("❌ Invalid environment variables: ", JSON.stringify(result.error.format(), null, 4));

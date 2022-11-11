@@ -9,24 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRequestBody = void 0;
+exports.registerController = void 0;
 const http_status_codes_1 = require("http-status-codes");
-const http_exception_1 = require("../exceptions/http.exception");
-const getErrorMessage = (zodError) => {
-    const messages = zodError.issues.map((issue) => issue.message);
-    return `Failed validating request body. Issues: [${messages.join(", ")}]`;
-};
-const validateRequestBody = (schema) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const zodParseResult = yield schema.safeParseAsync({
-        body: req.body,
-    });
-    if (zodParseResult.success) {
-        return next();
+const http_exception_1 = require("../../utils/exceptions/http.exception");
+const user_service_1 = require("../user/user.service");
+const registerController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield (0, user_service_1.createNewUser)(req.body);
+        return res.status(http_status_codes_1.StatusCodes.CREATED).json({
+            code: http_status_codes_1.StatusCodes.OK,
+            result: "SUCCESS",
+            data: user,
+        });
     }
-    else {
-        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, getErrorMessage(zodParseResult.error));
+    catch (error) {
+        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, error);
         return next(customException);
     }
 });
-exports.validateRequestBody = validateRequestBody;
-//# sourceMappingURL=validateRequestBody.middleware.js.map
+exports.registerController = registerController;
+//# sourceMappingURL=auth.controller.js.map

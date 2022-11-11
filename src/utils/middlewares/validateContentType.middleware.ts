@@ -8,7 +8,7 @@ function asyncCheckContentType(req: Request, allowedContentTypes: string[]) {
       resolve();
     } else {
       const usedContentType = req.get("Content-Type");
-      const errorMessage = `Unsupported Content-Type. You used: ${usedContentType} but only the following are allowed: ${allowedContentTypes.join(
+      const errorMessage = `Unsupported Content-Type. Used: ${usedContentType}. Supported: ${allowedContentTypes.join(
         ", "
       )}.`;
       reject(errorMessage);

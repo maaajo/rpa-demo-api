@@ -19,7 +19,7 @@ function asyncCheckContentType(req, allowedContentTypes) {
         }
         else {
             const usedContentType = req.get("Content-Type");
-            const errorMessage = `Unsupported Content-Type. You used: ${usedContentType} but only the following are allowed: ${allowedContentTypes.join(", ")}.`;
+            const errorMessage = `Unsupported Content-Type. Used: ${usedContentType}. Supported: ${allowedContentTypes.join(", ")}.`;
             reject(errorMessage);
         }
     });
@@ -28,11 +28,11 @@ function asyncCheckContentType(req, allowedContentTypes) {
 const validateContentType = (allowedContentTypes) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield asyncCheckContentType(req, allowedContentTypes);
-        next();
+        return next();
     }
     catch (error) {
         const customError = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.UNSUPPORTED_MEDIA_TYPE, error);
-        next(customError);
+        return next(customError);
     }
 });
 exports.validateContentType = validateContentType;

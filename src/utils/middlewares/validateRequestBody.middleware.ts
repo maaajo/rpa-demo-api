@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { AnyZodObject } from "zod";
+import { AnyZodObject, ZodError } from "zod";
 import { CustomException } from "../exceptions/http.exception";
+
+const getErrorMessage = (zodError: ZodError) => {
+  const messages = zodError.issues.map((issue) => issue.message);
+
+  return `Failed validating request body. Issues: [${messages.join(", ")}]`;
+};
 
 const validateRequestBody =
   (schema: AnyZodObject) =>
@@ -13,11 +19,11 @@ const validateRequestBody =
     if (zodParseResult.success) {
       return next();
     } else {
-      const error = new CustomException(
+      const customException = new CustomException(
         StatusCodes.BAD_REQUEST,
-        zodParseResult.error.message
+        getErrorMessage(zodParseResult.error)
       );
-      return next(error);
+      return next(customException);
     }
   };
 

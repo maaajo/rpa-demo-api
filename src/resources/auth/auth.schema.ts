@@ -24,7 +24,7 @@ const registerSchema = z.object({
           new RegExp(".*[`~<>?,./!@#$%^&*()\\-_+=\"'|{}\\[\\];:\\\\].*"),
           "Password must contain at least one special character"
         )
-        .min(8, "Must be at least 8 characters in length"),
+        .min(8, "Password must be at least 8 characters in length"),
     })
     .strict(),
 });
