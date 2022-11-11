@@ -11,13 +11,13 @@ const validateRequestBody =
     });
 
     if (zodParseResult.success) {
-      next();
+      return next();
     } else {
       const error = new CustomException(
         StatusCodes.BAD_REQUEST,
         zodParseResult.error.message
       );
-      next(error);
+      return next(error);
     }
   };
 

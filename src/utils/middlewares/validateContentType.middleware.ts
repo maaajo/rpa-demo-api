@@ -23,13 +23,13 @@ const validateContentType =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await asyncCheckContentType(req, allowedContentTypes);
-      next();
+      return next();
     } catch (error: any) {
       const customError = new CustomException(
         StatusCodes.UNSUPPORTED_MEDIA_TYPE,
         error
       );
-      next(customError);
+      return next(customError);
     }
   };
 
