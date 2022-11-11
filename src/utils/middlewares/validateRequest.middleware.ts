@@ -6,16 +6,16 @@ import { CustomException } from "../exceptions/http.exception";
 const validateRequest =
   (schema: AnyZodObject) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const parseResult = await schema.safeParseAsync({
+    const zodParseResult = await schema.safeParseAsync({
       body: req.body,
     });
 
-    if (parseResult.success) {
+    if (zodParseResult.success) {
       next();
     } else {
       const error = new CustomException(
         StatusCodes.BAD_REQUEST,
-        parseResult.error.message
+        zodParseResult.error.message
       );
       next(error);
     }
