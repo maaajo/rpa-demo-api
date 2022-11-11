@@ -24,5 +24,5 @@ model User {
   lastSuccessfulLoggedDate DateTime?
   lastFailedLoggedDate     DateTime?
   isSuspended              Boolean   @default(false)
-  role                     Role
+  role                     Role?
 }

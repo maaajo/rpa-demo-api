@@ -7,12 +7,6 @@ dotenvExpand.expand(myEnv);
 import { z } from "zod";
 
 const envSchema = z.object({
-  DATABASE_USERNAME: z.string(),
-  DATABASE_PASSWORD: z.string(),
-  DATABASE_HOST: z.string(),
-  DATABASE_PORT: z.string(),
-  DATABASE_NAME: z.string(),
-  DATABASE_SCHEMA_NAME: z.string(),
   DATABASE_URL: z.string(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   DEV_PORT: z.string().transform(Number),
