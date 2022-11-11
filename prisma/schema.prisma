@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id                       String    @id @default(uuid())
   createdAt                DateTime  @default(now())
@@ -19,4 +24,5 @@ model User {
   lastSuccessfulLoggedDate DateTime?
   lastFailedLoggedDate     DateTime?
   isSuspended              Boolean   @default(false)
+  role                     Role
 }
