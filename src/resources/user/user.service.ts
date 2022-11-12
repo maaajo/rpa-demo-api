@@ -1,6 +1,6 @@
 import { db } from "../../db/prisma.db";
 import { Prisma, Role } from "@prisma/client";
-import { excludeFields } from "../../utils/db/excludeFields";
+import { excludeFields } from "../../utils/db/excludeFieldsFromPrismaReturn";
 import * as bcrypt from "bcrypt";
 
 const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
@@ -14,9 +14,24 @@ const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
 
   const createdUser = await db.user.create({ data: userDataToCreate });
 
-  const createdUserWithoutPassword = excludeFields(createdUser, "password");
+  const createdUserWithoutPassword = excludeFields(createdUser, [
+    "password",
+    "isSuspended",
+    "lastFailedLoggedDate",
+    "lastSuccessfulLoggedDate",
+    "role",
+  ]);
 
   return createdUserWithoutPassword;
 };
 
-export { createNewUser };
+const getUserPasswordByEmail = async (email: string) => {
+  const result = await db.user.findUnique({
+    where: { email },
+    select: { password: true },
+  });
+
+  return result;
+};
+
+export { createNewUser, getUserPasswordByEmail };

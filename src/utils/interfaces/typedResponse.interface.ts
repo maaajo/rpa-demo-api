@@ -7,6 +7,6 @@ type CustomResponse<T> =
 
 type Send<T1 = Response, T2 = any> = (body?: CustomResponse<T2>) => T1;
 
-export interface TypedResponse<T = void> extends Response {
+export interface ITypedResponse<T = void> extends Response {
   json: Send<this, T>;
 }

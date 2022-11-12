@@ -15,4 +15,11 @@ authRouter
     (0, validateRequestBody_middleware_1.validateRequestBody)(auth_schema_1.registerSchema),
     auth_controller_1.registerController,
 ]);
+authRouter
+    .route("/login")
+    .post([
+    (0, validateContentType_middleware_1.validateContentType)(["application/json"]),
+    (0, validateRequestBody_middleware_1.validateRequestBody)(auth_schema_1.loginSchema),
+    auth_controller_1.loginController,
+]);
 //# sourceMappingURL=auth.router.js.map

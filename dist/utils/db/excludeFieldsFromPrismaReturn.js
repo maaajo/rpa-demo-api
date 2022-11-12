@@ -8,4 +8,4 @@ function excludeFields(type, keys) {
     return type;
 }
 exports.excludeFields = excludeFields;
-//# sourceMappingURL=excludeFields.js.map
+//# sourceMappingURL=excludeFieldsFromPrismaReturn.js.map

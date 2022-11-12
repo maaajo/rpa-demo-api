@@ -32,17 +32,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createNewUser = void 0;
+exports.getUserPasswordByEmail = exports.createNewUser = void 0;
 const prisma_db_1 = require("../../db/prisma.db");
 const client_1 = require("@prisma/client");
-const excludeFields_1 = require("../../utils/db/excludeFields");
+const excludeFieldsFromPrismaReturn_1 = require("../../utils/db/excludeFieldsFromPrismaReturn");
 const bcrypt = __importStar(require("bcrypt"));
 const createNewUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt.hash(user.password, 10);
     const userDataToCreate = Object.assign(Object.assign({}, user), { role: client_1.Role.USER, password: hashedPassword });
     const createdUser = yield prisma_db_1.db.user.create({ data: userDataToCreate });
-    const createdUserWithoutPassword = (0, excludeFields_1.excludeFields)(createdUser, "password");
+    const createdUserWithoutPassword = (0, excludeFieldsFromPrismaReturn_1.excludeFields)(createdUser, [
+        "password",
+        "isSuspended",
+        "lastFailedLoggedDate",
+        "lastSuccessfulLoggedDate",
+        "role",
+    ]);
     return createdUserWithoutPassword;
 });
 exports.createNewUser = createNewUser;
+const getUserPasswordByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_db_1.db.user.findUnique({
+        where: { email },
+        select: { password: true },
+    });
+    return result;
+});
+exports.getUserPasswordByEmail = getUserPasswordByEmail;
 //# sourceMappingURL=user.service.js.map

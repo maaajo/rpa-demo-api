@@ -1,6 +1,6 @@
 function excludeFields<T, Key extends keyof T>(
   type: T,
-  ...keys: Key[]
+  keys: Key[]
 ): Omit<T, Key> {
   for (let key of keys) {
     delete type[key];
