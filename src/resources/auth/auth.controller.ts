@@ -4,10 +4,16 @@ import { StatusCodes } from "http-status-codes";
 import { getPrismaErrorMessage } from "../../utils/db/prismaErrorHandler";
 import { CustomException } from "../../utils/exceptions/http.exception";
 import { ITypedResponse } from "../../utils/interfaces/typedResponse.interface";
-import { createNewUser, getUserPasswordByEmail } from "../user/user.service";
+import { createNewUser, getUserByEmail } from "../user/user.service";
 import { ILogin } from "./auth.interface";
+import * as bcrypt from "bcrypt";
+import { createJwtToken } from "../../utils/auth/jwt.utils";
 
 type TCreateNewUser = Awaited<ReturnType<typeof createNewUser>>;
+
+type TLoginResponse = {
+  token: string;
+};
 
 const registerController = async (
   req: Request<{}, {}, Prisma.UserCreateArgs["data"]>,
@@ -34,15 +40,15 @@ const registerController = async (
 
 const loginController = async (
   req: Request<{}, {}, ILogin>,
-  res: ITypedResponse<string>,
+  res: ITypedResponse<TLoginResponse>,
   next: NextFunction
 ) => {
   try {
     const { email: providedEmail, password: providedPassword } = req.body;
 
-    const getHashedPasswordResult = await getUserPasswordByEmail(providedEmail);
+    const getUserResult = await getUserByEmail(providedEmail);
 
-    if (!getHashedPasswordResult) {
+    if (!getUserResult) {
       const customException = new CustomException(
         StatusCodes.NOT_FOUND,
         "Email not found"
@@ -50,10 +56,30 @@ const loginController = async (
       return next(customException);
     }
 
+    const isPasswordValid = await bcrypt.compare(
+      providedPassword,
+      getUserResult.password
+    );
+
+    if (!isPasswordValid) {
+      const customException = new CustomException(
+        StatusCodes.BAD_REQUEST,
+        "Invalid Password"
+      );
+      return next(customException);
+    }
+
+    const token = createJwtToken({
+      email: providedEmail,
+      role: getUserResult.role,
+    });
+
     return res.status(StatusCodes.OK).json({
       code: StatusCodes.OK,
       result: "SUCCESS",
-      data: getHashedPasswordResult.password,
+      data: {
+        token,
+      },
     });
   } catch (error: any) {
     const customException = new CustomException(

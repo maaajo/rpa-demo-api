@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserPasswordByEmail = exports.createNewUser = void 0;
+exports.insertSuccessAuthAttempt = exports.insertLastFailedAuthAttempt = exports.getUserByEmail = exports.createNewUser = void 0;
 const prisma_db_1 = require("../../db/prisma.db");
 const client_1 = require("@prisma/client");
 const excludeFieldsFromPrismaReturn_1 = require("../../utils/db/excludeFieldsFromPrismaReturn");
@@ -51,12 +51,26 @@ const createNewUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     return createdUserWithoutPassword;
 });
 exports.createNewUser = createNewUser;
-const getUserPasswordByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_db_1.db.user.findUnique({
         where: { email },
-        select: { password: true },
+        select: { password: true, role: true },
     });
     return result;
 });
-exports.getUserPasswordByEmail = getUserPasswordByEmail;
+exports.getUserByEmail = getUserByEmail;
+const insertLastFailedAuthAttempt = (userEmail) => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma_db_1.db.user.update({
+        where: { email: userEmail },
+        data: { lastFailedLoggedDate: new Date() },
+    });
+});
+exports.insertLastFailedAuthAttempt = insertLastFailedAuthAttempt;
+const insertSuccessAuthAttempt = (userEmail) => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma_db_1.db.user.update({
+        where: { email: userEmail },
+        data: { lastSuccessfulLoggedDate: new Date() },
+    });
+});
+exports.insertSuccessAuthAttempt = insertSuccessAuthAttempt;
 //# sourceMappingURL=user.service.js.map

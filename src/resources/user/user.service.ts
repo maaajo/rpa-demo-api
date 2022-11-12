@@ -25,13 +25,32 @@ const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
   return createdUserWithoutPassword;
 };
 
-const getUserPasswordByEmail = async (email: string) => {
+const getUserByEmail = async (email: string) => {
   const result = await db.user.findUnique({
     where: { email },
-    select: { password: true },
+    select: { password: true, role: true },
   });
 
   return result;
 };
 
-export { createNewUser, getUserPasswordByEmail };
+const insertLastFailedAuthAttempt = async (userEmail: string) => {
+  await db.user.update({
+    where: { email: userEmail },
+    data: { lastFailedLoggedDate: new Date() },
+  });
+};
+
+const insertSuccessAuthAttempt = async (userEmail: string) => {
+  await db.user.update({
+    where: { email: userEmail },
+    data: { lastSuccessfulLoggedDate: new Date() },
+  });
+};
+
+export {
+  createNewUser,
+  getUserByEmail,
+  insertLastFailedAuthAttempt,
+  insertSuccessAuthAttempt,
+};
