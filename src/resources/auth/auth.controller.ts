@@ -9,12 +9,11 @@ import {
   getUserByEmail,
   insertLastFailedAuthAttempt,
   insertSuccessAuthAttempt,
+  cleanUserResponse,
 } from "../user/user.service";
 import { ILogin } from "./auth.interface";
 import * as bcrypt from "bcrypt";
 import { createJwtToken } from "../../utils/auth/jwt.utils";
-
-type TCreateNewUser = Awaited<ReturnType<typeof createNewUser>>;
 
 type TLoginResponse = {
   token: string;
@@ -22,16 +21,18 @@ type TLoginResponse = {
 
 const registerController = async (
   req: Request<{}, {}, Prisma.UserCreateArgs["data"]>,
-  res: ITypedResponse<TCreateNewUser>,
+  res: ITypedResponse<ReturnType<typeof cleanUserResponse>>,
   next: NextFunction
 ) => {
   try {
     const user = await createNewUser(req.body);
 
+    const userCleaned = cleanUserResponse(user);
+
     return res.status(StatusCodes.CREATED).json({
       code: StatusCodes.OK,
       result: "SUCCESS",
-      data: user,
+      data: userCleaned,
     });
   } catch (error: any) {
     const prismaErrorMessage = getPrismaErrorMessage(error);
