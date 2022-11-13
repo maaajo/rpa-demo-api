@@ -1,6 +1,6 @@
 import { Role } from "@prisma/client";
 import { sign } from "jsonwebtoken";
-import { env } from "../../env";
+import config from "../../config/config";
 
 interface IJwtPayload {
   email: string;
@@ -8,7 +8,7 @@ interface IJwtPayload {
 }
 
 const createJwtToken = (payload: IJwtPayload) => {
-  const token = sign(payload, env.SECRET_KEY, {
+  const token = sign(payload, config.auth.accessTokenSecretKey, {
     expiresIn: "1d",
   });
 

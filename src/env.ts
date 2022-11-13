@@ -11,7 +11,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
   DEV_PORT: z.string().transform(Number),
   APP_PORT: z.string().transform(Number),
-  SECRET_KEY: z.string().min(20),
+  ACCESS_TOKEN_SECRET_KEY: z.string().min(20),
   LOGGING_DIR: z.string(),
   LOGGING_LEVEL: z.enum(["combined", "common", "dev", "short", "tiny"]),
   APP_HOST: z.string().url(),
