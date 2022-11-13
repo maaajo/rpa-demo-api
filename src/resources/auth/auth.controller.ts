@@ -16,7 +16,8 @@ import * as bcrypt from "bcrypt";
 import { createJwtToken } from "../../utils/auth/jwt.utils";
 
 type TLoginResponse = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 const registerController = async (
@@ -87,7 +88,8 @@ const loginController = async (
       code: StatusCodes.OK,
       result: "SUCCESS",
       data: {
-        token,
+        accessToken: token,
+        refreshToken: "test",
       },
     });
   } catch (error: any) {
