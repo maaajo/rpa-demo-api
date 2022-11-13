@@ -13,12 +13,10 @@ import {
 } from "../user/user.service";
 import { ILogin } from "./auth.interface";
 import * as bcrypt from "bcrypt";
-import { createJwtToken } from "../../utils/auth/jwt.utils";
-
-type TLoginResponse = {
-  accessToken: string;
-  refreshToken: string;
-};
+import {
+  createAccessToken,
+  createRefreshToken,
+} from "../../utils/auth/jwt.utils";
 
 const registerController = async (
   req: Request<{}, {}, Prisma.UserCreateArgs["data"]>,
@@ -47,7 +45,7 @@ const registerController = async (
 
 const loginController = async (
   req: Request<{}, {}, ILogin>,
-  res: ITypedResponse<TLoginResponse>,
+  res: ITypedResponse<{ accessToken: string; refreshToken: string }>,
   next: NextFunction
 ) => {
   try {
@@ -77,9 +75,17 @@ const loginController = async (
       return next(customException);
     }
 
-    const token = createJwtToken({
-      email: providedEmail,
-      role: getUserResult.role,
+    const { id: userId, role: userRole } = getUserResult;
+
+    const accessToken = createAccessToken({
+      id: userId,
+      role: userRole,
+    });
+
+    const refreshToken = createRefreshToken({
+      id: userId,
+      role: userRole,
+      ip: req.ip,
     });
 
     await insertSuccessAuthAttempt(providedEmail);
@@ -88,8 +94,8 @@ const loginController = async (
       code: StatusCodes.OK,
       result: "SUCCESS",
       data: {
-        accessToken: token,
-        refreshToken: "test",
+        accessToken,
+        refreshToken,
       },
     });
   } catch (error: any) {

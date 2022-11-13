@@ -20,7 +20,7 @@ const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
 const getUserByEmail = async (email: string) => {
   const result = await db.user.findUnique({
     where: { email },
-    select: { password: true, role: true },
+    select: { password: true, role: true, id: true },
   });
 
   return result;
