@@ -4,7 +4,12 @@ import { StatusCodes } from "http-status-codes";
 import { getPrismaErrorMessage } from "../../utils/db/prismaErrorHandler";
 import { CustomException } from "../../utils/exceptions/http.exception";
 import { ITypedResponse } from "../../utils/interfaces/typedResponse.interface";
-import { createNewUser, getUserByEmail } from "../user/user.service";
+import {
+  createNewUser,
+  getUserByEmail,
+  insertLastFailedAuthAttempt,
+  insertSuccessAuthAttempt,
+} from "../user/user.service";
 import { ILogin } from "./auth.interface";
 import * as bcrypt from "bcrypt";
 import { createJwtToken } from "../../utils/auth/jwt.utils";
@@ -62,6 +67,7 @@ const loginController = async (
     );
 
     if (!isPasswordValid) {
+      await insertLastFailedAuthAttempt(providedEmail);
       const customException = new CustomException(
         StatusCodes.BAD_REQUEST,
         "Invalid Password"
@@ -73,6 +79,8 @@ const loginController = async (
       email: providedEmail,
       role: getUserResult.role,
     });
+
+    await insertSuccessAuthAttempt(providedEmail);
 
     return res.status(StatusCodes.OK).json({
       code: StatusCodes.OK,

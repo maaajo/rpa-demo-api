@@ -65,6 +65,7 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         }
         const isPasswordValid = yield bcrypt.compare(providedPassword, getUserResult.password);
         if (!isPasswordValid) {
+            yield (0, user_service_1.insertLastFailedAuthAttempt)(providedEmail);
             const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid Password");
             return next(customException);
         }
@@ -72,6 +73,7 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             email: providedEmail,
             role: getUserResult.role,
         });
+        yield (0, user_service_1.insertSuccessAuthAttempt)(providedEmail);
         return res.status(http_status_codes_1.StatusCodes.OK).json({
             code: http_status_codes_1.StatusCodes.OK,
             result: "SUCCESS",

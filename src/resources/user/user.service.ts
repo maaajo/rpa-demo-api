@@ -16,7 +16,6 @@ const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
 
   const createdUserWithoutPassword = excludeFields(createdUser, [
     "password",
-    "isSuspended",
     "lastFailedLoggedDate",
     "lastSuccessfulLoggedDate",
     "role",
