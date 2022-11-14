@@ -28,17 +28,15 @@ model User {
 }
 
 model RefreshToken {
-  id              String   @id @default(uuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   userId          String
-  user            User     @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
   token           String
-  expires         DateTime
-  createdByIp     String
-  revoked         DateTime
-  revokedByIp     String
-  replacedByToken String
-  isExpired       Boolean
-  isActive        Boolean
+  revokedTime     DateTime?
+  revokedByIp     String?
+  replacedByToken String?
+  isExpired       Boolean   @default(false)
+  isActive        Boolean   @default(true)
 }

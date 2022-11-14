@@ -88,7 +88,7 @@ const loginController = async (
       ip: req.ip,
     });
 
-    await insertSuccessAuthAttempt(providedEmail);
+    await insertSuccessAuthAttempt(userId);
 
     return res.status(StatusCodes.OK).json({
       code: StatusCodes.OK,

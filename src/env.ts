@@ -12,6 +12,7 @@ const envSchema = z.object({
   DEV_PORT: z.string().transform(Number),
   APP_PORT: z.string().transform(Number),
   ACCESS_TOKEN_SECRET_KEY: z.string().min(20),
+  REFRESH_TOKEN_SECRET_KEY: z.string().min(20),
   LOGGING_DIR: z.string(),
   LOGGING_LEVEL: z.enum(["combined", "common", "dev", "short", "tiny"]),
   APP_HOST: z.string().url(),

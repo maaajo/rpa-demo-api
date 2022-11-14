@@ -26,16 +26,16 @@ const getUserByEmail = async (email: string) => {
   return result;
 };
 
-const insertLastFailedAuthAttempt = async (userEmail: string) => {
+const insertLastFailedAuthAttempt = async (id: string) => {
   await db.user.update({
-    where: { email: userEmail },
+    where: { id },
     data: { lastFailedLoggedDate: new Date() },
   });
 };
 
-const insertSuccessAuthAttempt = async (userEmail: string) => {
+const insertSuccessAuthAttempt = async (id: string) => {
   await db.user.update({
-    where: { email: userEmail },
+    where: { id },
     data: { lastSuccessfulLoggedDate: new Date() },
   });
 };
