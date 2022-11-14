@@ -17,6 +17,7 @@ import {
   createAccessToken,
   createRefreshToken,
 } from "../../utils/auth/jwt.utils";
+import { saveRefreshToken } from "./auth.service";
 
 const registerController = async (
   req: Request<{}, {}, Prisma.UserCreateArgs["data"]>,
@@ -61,21 +62,21 @@ const loginController = async (
       return next(customException);
     }
 
+    const { id: userId, role: userRole } = getUserResult;
+
     const isPasswordValid = await bcrypt.compare(
       providedPassword,
       getUserResult.password
     );
 
     if (!isPasswordValid) {
-      await insertLastFailedAuthAttempt(providedEmail);
+      await insertLastFailedAuthAttempt(userId);
       const customException = new CustomException(
         StatusCodes.BAD_REQUEST,
         "Invalid Password"
       );
       return next(customException);
     }
-
-    const { id: userId, role: userRole } = getUserResult;
 
     const accessToken = createAccessToken({
       id: userId,
@@ -89,6 +90,7 @@ const loginController = async (
     });
 
     await insertSuccessAuthAttempt(userId);
+    await saveRefreshToken({ token: refreshToken, userId });
 
     return res.status(StatusCodes.OK).json({
       code: StatusCodes.OK,

@@ -39,13 +39,15 @@ const http_exception_1 = require("../../utils/exceptions/http.exception");
 const user_service_1 = require("../user/user.service");
 const bcrypt = __importStar(require("bcrypt"));
 const jwt_utils_1 = require("../../utils/auth/jwt.utils");
+const auth_service_1 = require("./auth.service");
 const registerController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield (0, user_service_1.createNewUser)(req.body);
+        const userCleaned = (0, user_service_1.cleanUserResponse)(user);
         return res.status(http_status_codes_1.StatusCodes.CREATED).json({
             code: http_status_codes_1.StatusCodes.OK,
             result: "SUCCESS",
-            data: user,
+            data: userCleaned,
         });
     }
     catch (error) {
@@ -63,22 +65,30 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.NOT_FOUND, "Email not found");
             return next(customException);
         }
+        const { id: userId, role: userRole } = getUserResult;
         const isPasswordValid = yield bcrypt.compare(providedPassword, getUserResult.password);
         if (!isPasswordValid) {
-            yield (0, user_service_1.insertLastFailedAuthAttempt)(providedEmail);
+            yield (0, user_service_1.insertLastFailedAuthAttempt)(userId);
             const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid Password");
             return next(customException);
         }
-        const token = (0, jwt_utils_1.createJwtToken)({
-            email: providedEmail,
-            role: getUserResult.role,
+        const accessToken = (0, jwt_utils_1.createAccessToken)({
+            id: userId,
+            role: userRole,
         });
-        yield (0, user_service_1.insertSuccessAuthAttempt)(providedEmail);
+        const refreshToken = (0, jwt_utils_1.createRefreshToken)({
+            id: userId,
+            role: userRole,
+            ip: req.ip,
+        });
+        yield (0, user_service_1.insertSuccessAuthAttempt)(userId);
+        yield (0, auth_service_1.saveRefreshToken)({ token: refreshToken, userId });
         return res.status(http_status_codes_1.StatusCodes.OK).json({
             code: http_status_codes_1.StatusCodes.OK,
             result: "SUCCESS",
             data: {
-                token,
+                accessToken,
+                refreshToken,
             },
         });
     }
