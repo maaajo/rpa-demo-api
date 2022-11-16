@@ -39,23 +39,27 @@ exports.createRefreshToken = exports.createAccessToken = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const config_1 = __importDefault(require("../../config/config"));
 const fs = __importStar(require("fs/promises"));
-const { auth: { accessTokenSecretKey, accessTokenExpiresIn, refreshTokenSecretKey, refreshTokenExpiresIn, }, } = config_1.default;
+const { auth: { privateKeyPath, accessTokenSecretKey, accessTokenExpiresIn, refreshTokenSecretKey, refreshTokenExpiresIn, }, } = config_1.default;
 const getPrivateKey = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(process.cwd());
-    return yield fs.readFile("./");
+    return yield fs.readFile(privateKeyPath, "utf-8");
 });
-const createAccessToken = (accessPayload) => {
-    const token = (0, jsonwebtoken_1.sign)(accessPayload, accessTokenSecretKey, {
+const createAccessToken = (accessPayload) => __awaiter(void 0, void 0, void 0, function* () {
+    const privateKey = yield getPrivateKey();
+    const token = (0, jsonwebtoken_1.sign)(accessPayload, privateKey, {
         expiresIn: accessTokenExpiresIn,
+        algorithm: "RS256",
     });
     return token;
-};
+});
 exports.createAccessToken = createAccessToken;
-const createRefreshToken = (refreshPayload) => {
-    const token = (0, jsonwebtoken_1.sign)(refreshPayload, refreshTokenSecretKey, {
+const createRefreshToken = (refreshPayload) => __awaiter(void 0, void 0, void 0, function* () {
+    const privateKey = yield getPrivateKey();
+    const token = (0, jsonwebtoken_1.sign)(refreshPayload, privateKey, {
         expiresIn: `${refreshTokenExpiresIn}d`,
+        algorithm: "RS256",
     });
     return token;
-};
+});
 exports.createRefreshToken = createRefreshToken;
 //# sourceMappingURL=jwt.utils.js.map

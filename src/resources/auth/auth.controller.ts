@@ -52,7 +52,6 @@ const loginController = async (
   try {
     const { email: providedEmail, password: providedPassword } = req.body;
 
-    console.log(process.cwd());
     const getUserResult = await getUserByEmail(providedEmail);
 
     if (!getUserResult) {
@@ -79,12 +78,12 @@ const loginController = async (
       return next(customException);
     }
 
-    const accessToken = createAccessToken({
+    const accessToken = await createAccessToken({
       id: userId,
       role: userRole,
     });
 
-    const refreshToken = createRefreshToken({
+    const refreshToken = await createRefreshToken({
       id: userId,
       role: userRole,
       ip: req.ip,

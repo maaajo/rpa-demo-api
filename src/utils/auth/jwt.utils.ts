@@ -5,6 +5,7 @@ import * as fs from "fs/promises";
 
 const {
   auth: {
+    privateKeyPath,
     accessTokenSecretKey,
     accessTokenExpiresIn,
     refreshTokenSecretKey,
@@ -25,20 +26,24 @@ type TRefreshPayload = {
 
 const getPrivateKey = async () => {
   console.log(process.cwd());
-  return await fs.readFile("./");
+  return await fs.readFile(privateKeyPath, "utf-8");
 };
 
-const createAccessToken = (accessPayload: TAccessPayload) => {
-  const token = sign(accessPayload, accessTokenSecretKey, {
+const createAccessToken = async (accessPayload: TAccessPayload) => {
+  const privateKey = await getPrivateKey();
+  const token = sign(accessPayload, privateKey, {
     expiresIn: accessTokenExpiresIn,
+    algorithm: "RS256",
   });
 
   return token;
 };
 
-const createRefreshToken = (refreshPayload: TRefreshPayload) => {
-  const token = sign(refreshPayload, refreshTokenSecretKey, {
+const createRefreshToken = async (refreshPayload: TRefreshPayload) => {
+  const privateKey = await getPrivateKey();
+  const token = sign(refreshPayload, privateKey, {
     expiresIn: `${refreshTokenExpiresIn}d`,
+    algorithm: "RS256",
   });
 
   return token;

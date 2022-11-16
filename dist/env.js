@@ -25,9 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
 const dotenv = __importStar(require("dotenv"));
-const dotenvExpand = __importStar(require("dotenv-expand"));
-const myEnv = dotenv.config();
-dotenvExpand.expand(myEnv);
+dotenv.config();
 const zod_1 = require("zod");
 const envSchema = zod_1.z.object({
     DATABASE_URL: zod_1.z.string(),
@@ -37,6 +35,8 @@ const envSchema = zod_1.z.object({
     ACCESS_TOKEN_SECRET_KEY: zod_1.z.string().min(20),
     REFRESH_TOKEN_SECRET_KEY: zod_1.z.string().min(20),
     PRIVATE_KEY_PASSPHRASE: zod_1.z.string().min(20),
+    PRIVATE_KEY_PATH: zod_1.z.string(),
+    PUBLIC_KEY_PATH: zod_1.z.string(),
     LOGGING_DIR: zod_1.z.string(),
     LOGGING_LEVEL: zod_1.z.enum(["combined", "common", "dev", "short", "tiny"]),
     APP_HOST: zod_1.z.string().url(),
