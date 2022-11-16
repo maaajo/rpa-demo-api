@@ -52,6 +52,7 @@ const loginController = async (
   try {
     const { email: providedEmail, password: providedPassword } = req.body;
 
+    console.log(process.cwd());
     const getUserResult = await getUserByEmail(providedEmail);
 
     if (!getUserResult) {

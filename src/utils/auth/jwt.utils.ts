@@ -1,6 +1,7 @@
 import { Role } from "@prisma/client";
 import { sign } from "jsonwebtoken";
 import config from "../../config/config";
+import * as fs from "fs/promises";
 
 const {
   auth: {
@@ -20,6 +21,11 @@ type TRefreshPayload = {
   id: string;
   role: Role;
   ip: string;
+};
+
+const getPrivateKey = async () => {
+  console.log(process.cwd());
+  return await fs.readFile("./");
 };
 
 const createAccessToken = (accessPayload: TAccessPayload) => {

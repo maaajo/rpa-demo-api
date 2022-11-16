@@ -1,8 +1,6 @@
 import * as dotenv from "dotenv";
-import * as dotenvExpand from "dotenv-expand";
 
-const myEnv = dotenv.config();
-dotenvExpand.expand(myEnv);
+dotenv.config();
 
 import { z } from "zod";
 
@@ -13,6 +11,7 @@ const envSchema = z.object({
   APP_PORT: z.string().transform(Number),
   ACCESS_TOKEN_SECRET_KEY: z.string().min(20),
   REFRESH_TOKEN_SECRET_KEY: z.string().min(20),
+  PRIVATE_KEY_PASSPHRASE: z.string().min(20),
   LOGGING_DIR: z.string(),
   LOGGING_LEVEL: z.enum(["combined", "common", "dev", "short", "tiny"]),
   APP_HOST: z.string().url(),

@@ -8,6 +8,7 @@ exports.default = {
     environment: env_1.env.NODE_ENV || "development",
     port: env_1.env.NODE_ENV === "development" ? env_1.env.DEV_PORT : env_1.env.APP_PORT,
     auth: {
+        privateKeyPassphrase: env_1.env.PRIVATE_KEY_PASSPHRASE,
         accessTokenSecretKey: env_1.env.ACCESS_TOKEN_SECRET_KEY,
         refreshTokenSecretKey: env_1.env.REFRESH_TOKEN_SECRET_KEY,
         accessTokenExpiresIn: "15m",

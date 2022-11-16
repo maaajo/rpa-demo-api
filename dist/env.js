@@ -36,6 +36,7 @@ const envSchema = zod_1.z.object({
     APP_PORT: zod_1.z.string().transform(Number),
     ACCESS_TOKEN_SECRET_KEY: zod_1.z.string().min(20),
     REFRESH_TOKEN_SECRET_KEY: zod_1.z.string().min(20),
+    PRIVATE_KEY_PASSPHRASE: zod_1.z.string().min(20),
     LOGGING_DIR: zod_1.z.string(),
     LOGGING_LEVEL: zod_1.z.enum(["combined", "common", "dev", "short", "tiny"]),
     APP_HOST: zod_1.z.string().url(),

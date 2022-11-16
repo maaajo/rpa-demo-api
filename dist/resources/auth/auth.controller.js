@@ -60,6 +60,7 @@ exports.registerController = registerController;
 const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email: providedEmail, password: providedPassword } = req.body;
+        console.log(process.cwd());
         const getUserResult = yield (0, user_service_1.getUserByEmail)(providedEmail);
         if (!getUserResult) {
             const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.NOT_FOUND, "Email not found");
