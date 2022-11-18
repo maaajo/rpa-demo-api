@@ -39,9 +39,8 @@ exports.createRefreshToken = exports.createAccessToken = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const config_1 = __importDefault(require("../../config/config"));
 const fs = __importStar(require("fs/promises"));
-const { auth: { privateKeyPath, accessTokenSecretKey, accessTokenExpiresIn, refreshTokenSecretKey, refreshTokenExpiresIn, }, } = config_1.default;
+const { auth: { privateKeyPath, accessTokenExpiresIn, refreshTokenExpiresIn }, } = config_1.default;
 const getPrivateKey = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(process.cwd());
     return yield fs.readFile(privateKeyPath, "utf-8");
 });
 const createAccessToken = (accessPayload) => __awaiter(void 0, void 0, void 0, function* () {

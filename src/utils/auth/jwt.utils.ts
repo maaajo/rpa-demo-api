@@ -4,13 +4,7 @@ import config from "../../config/config";
 import * as fs from "fs/promises";
 
 const {
-  auth: {
-    privateKeyPath,
-    accessTokenSecretKey,
-    accessTokenExpiresIn,
-    refreshTokenSecretKey,
-    refreshTokenExpiresIn,
-  },
+  auth: { privateKeyPath, accessTokenExpiresIn, refreshTokenExpiresIn },
 } = config;
 
 type TAccessPayload = {
@@ -25,7 +19,6 @@ type TRefreshPayload = {
 };
 
 const getPrivateKey = async () => {
-  console.log(process.cwd());
   return await fs.readFile(privateKeyPath, "utf-8");
 };
 
