@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Request, NextFunction } from "express";
+import { Request, NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getPrismaErrorMessage } from "../../utils/db/prismaErrorHandler";
 import { CustomException } from "../../utils/exceptions/http.exception";
@@ -109,4 +109,10 @@ const loginController = async (
   }
 };
 
-export { registerController, loginController };
+const refreshTokenController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {};
+
+export { registerController, loginController, refreshTokenController };

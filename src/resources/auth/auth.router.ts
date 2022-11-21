@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { registerSchema, loginSchema } from "./auth.schema";
+import { registerSchema, loginSchema, refreshTokenSchema } from "./auth.schema";
 import { validateContentType } from "../../utils/middlewares/validateContentType.middleware";
 import { validateRequestBody } from "../../utils/middlewares/validateRequestBody.middleware";
-import { registerController, loginController } from "./auth.controller";
+import {
+  registerController,
+  loginController,
+  refreshTokenController,
+} from "./auth.controller";
 
 const authRouter: Router = Router();
 
@@ -20,6 +24,14 @@ authRouter
     validateContentType(["application/json"]),
     validateRequestBody(loginSchema),
     loginController,
+  ]);
+
+authRouter
+  .route("/refreshToken")
+  .post([
+    validateContentType(["application/json"]),
+    validateRequestBody(refreshTokenSchema),
+    refreshTokenController,
   ]);
 
 export { authRouter };
