@@ -40,4 +40,14 @@ const loginSchema = z.object({
     .strict(),
 });
 
-export { registerSchema, loginSchema };
+const refreshTokenSchema = z.object({
+  body: z
+    .object({
+      refreshToken: z
+        .string({ required_error: "Refresh token is required" })
+        .min(20, "Refresh token is too short"),
+    })
+    .strict(),
+});
+
+export { registerSchema, loginSchema, refreshTokenSchema };
