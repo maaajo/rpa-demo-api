@@ -33,7 +33,7 @@ model RefreshToken {
   updatedAt       DateTime  @updatedAt
   userId          String
   user            User      @relation(fields: [userId], references: [id])
-  token           String
+  token           String    @unique
   revokedTime     DateTime?
   revokedByIp     String?
   replacedByToken String?
