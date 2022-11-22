@@ -4,25 +4,34 @@ import config from "../../config/config";
 import * as fs from "fs/promises";
 
 const {
-  auth: { privateKeyPath, accessTokenExpiresIn, refreshTokenExpiresIn },
+  auth: {
+    privateKeyPath,
+    accessTokenExpiresIn,
+    refreshTokenExpiresIn,
+    publicKeyPath,
+  },
 } = config;
 
-type TAccessPayload = {
+interface IAccessPayload {
   id: string;
   role: Role;
-};
+}
 
-type TRefreshPayload = {
+interface IRefreshPayload {
   id: string;
   role: Role;
   ip: string;
+}
+
+const getPublicKey = async () => {
+  return await fs.readFile(publicKeyPath, "utf-8");
 };
 
 const getPrivateKey = async () => {
   return await fs.readFile(privateKeyPath, "utf-8");
 };
 
-const createAccessToken = async (accessPayload: TAccessPayload) => {
+const createAccessToken = async (accessPayload: IAccessPayload) => {
   const privateKey = await getPrivateKey();
   const token = sign(accessPayload, privateKey, {
     expiresIn: accessTokenExpiresIn,
@@ -32,7 +41,7 @@ const createAccessToken = async (accessPayload: TAccessPayload) => {
   return token;
 };
 
-const createRefreshToken = async (refreshPayload: TRefreshPayload) => {
+const createRefreshToken = async (refreshPayload: IRefreshPayload) => {
   const privateKey = await getPrivateKey();
   const token = sign(refreshPayload, privateKey, {
     expiresIn: `${refreshTokenExpiresIn}d`,
@@ -44,7 +53,8 @@ const createRefreshToken = async (refreshPayload: TRefreshPayload) => {
 
 export {
   createAccessToken,
-  TAccessPayload,
+  IAccessPayload,
   createRefreshToken,
-  TRefreshPayload,
+  IRefreshPayload,
+  getPublicKey,
 };

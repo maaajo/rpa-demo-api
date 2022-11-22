@@ -35,11 +35,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRefreshToken = exports.createAccessToken = void 0;
+exports.getPublicKey = exports.createRefreshToken = exports.createAccessToken = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const config_1 = __importDefault(require("../../config/config"));
 const fs = __importStar(require("fs/promises"));
-const { auth: { privateKeyPath, accessTokenExpiresIn, refreshTokenExpiresIn }, } = config_1.default;
+const { auth: { privateKeyPath, accessTokenExpiresIn, refreshTokenExpiresIn, publicKeyPath, }, } = config_1.default;
+const getPublicKey = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield fs.readFile(publicKeyPath, "utf-8");
+});
+exports.getPublicKey = getPublicKey;
 const getPrivateKey = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield fs.readFile(privateKeyPath, "utf-8");
 });

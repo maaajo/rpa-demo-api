@@ -11,13 +11,19 @@ import {
   insertSuccessAuthAttempt,
   cleanUserResponse,
 } from "../user/user.service";
-import { ILogin } from "./auth.interface";
+import {
+  IJwtVerifyRefreshPayload,
+  ILoginRequest,
+  IRefreshRequest,
+} from "./auth.interface";
 import * as bcrypt from "bcrypt";
 import {
   createAccessToken,
   createRefreshToken,
+  getPublicKey,
 } from "../../utils/auth/jwt.utils";
 import { saveRefreshToken } from "./auth.service";
+import * as jwt from "jsonwebtoken";
 
 const registerController = async (
   req: Request<{}, {}, Prisma.UserCreateArgs["data"]>,
@@ -45,7 +51,7 @@ const registerController = async (
 };
 
 const loginController = async (
-  req: Request<{}, {}, ILogin>,
+  req: Request<{}, {}, ILoginRequest>,
   res: ITypedResponse<{ accessToken: string; refreshToken: string }>,
   next: NextFunction
 ) => {
@@ -110,9 +116,20 @@ const loginController = async (
 };
 
 const refreshTokenController = async (
-  req: Request,
+  req: Request<{}, {}, IRefreshRequest>,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const refreshToken = req.body.refreshToken;
+
+  const publicKey = await getPublicKey();
+
+  const isRefreshTokenValid = jwt.verify(
+    refreshToken,
+    publicKey
+  ) as IJwtVerifyRefreshPayload;
+
+  res.send(200);
+};
 
 export { registerController, loginController, refreshTokenController };

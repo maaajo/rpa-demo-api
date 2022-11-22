@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginSchema = exports.registerSchema = void 0;
+exports.refreshTokenSchema = exports.loginSchema = exports.registerSchema = void 0;
 const zod_1 = require("zod");
 const registerSchema = zod_1.z.object({
     body: zod_1.z
@@ -30,4 +30,14 @@ const loginSchema = zod_1.z.object({
         .strict(),
 });
 exports.loginSchema = loginSchema;
+const refreshTokenSchema = zod_1.z.object({
+    body: zod_1.z
+        .object({
+        refreshToken: zod_1.z
+            .string({ required_error: "Refresh token is required" })
+            .min(20, "Refresh token is too short"),
+    })
+        .strict(),
+});
+exports.refreshTokenSchema = refreshTokenSchema;
 //# sourceMappingURL=auth.schema.js.map

@@ -22,4 +22,11 @@ authRouter
     (0, validateRequestBody_middleware_1.validateRequestBody)(auth_schema_1.loginSchema),
     auth_controller_1.loginController,
 ]);
+authRouter
+    .route("/refreshToken")
+    .post([
+    (0, validateContentType_middleware_1.validateContentType)(["application/json"]),
+    (0, validateRequestBody_middleware_1.validateRequestBody)(auth_schema_1.refreshTokenSchema),
+    auth_controller_1.refreshTokenController,
+]);
 //# sourceMappingURL=auth.router.js.map

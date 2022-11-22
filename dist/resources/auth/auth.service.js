@@ -15,4 +15,16 @@ const saveRefreshToken = (refreshTokenData) => __awaiter(void 0, void 0, void 0,
     return yield prisma_db_1.db.refreshToken.create({ data: refreshTokenData });
 });
 exports.saveRefreshToken = saveRefreshToken;
+const getRefreshTokenUser = (findValues) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_db_1.db.refreshToken.findUnique({
+        where: findValues,
+        select: { user: true },
+    });
+});
+const updateRefreshToken = (findValues, dataToUpdate) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_db_1.db.refreshToken.update({
+        where: findValues,
+        data: dataToUpdate,
+    });
+});
 //# sourceMappingURL=auth.service.js.map

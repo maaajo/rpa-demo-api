@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginController = exports.registerController = void 0;
+exports.refreshTokenController = exports.loginController = exports.registerController = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const prismaErrorHandler_1 = require("../../utils/db/prismaErrorHandler");
 const http_exception_1 = require("../../utils/exceptions/http.exception");
@@ -40,6 +40,7 @@ const user_service_1 = require("../user/user.service");
 const bcrypt = __importStar(require("bcrypt"));
 const jwt_utils_1 = require("../../utils/auth/jwt.utils");
 const auth_service_1 = require("./auth.service");
+const jwt = __importStar(require("jsonwebtoken"));
 const registerController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield (0, user_service_1.createNewUser)(req.body);
@@ -98,4 +99,11 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.loginController = loginController;
+const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.body.refreshToken;
+    const publicKey = yield (0, jwt_utils_1.getPublicKey)();
+    const isRefreshTokenValid = jwt.verify(refreshToken, publicKey);
+    res.send(200);
+});
+exports.refreshTokenController = refreshTokenController;
 //# sourceMappingURL=auth.controller.js.map
