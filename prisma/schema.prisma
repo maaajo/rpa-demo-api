@@ -25,6 +25,7 @@ model User {
   lastFailedLoggedDate     DateTime?
   role                     Role           @default(USER)
   RefreshToken             RefreshToken[]
+  lastLoginIp              String
 }
 
 model RefreshToken {

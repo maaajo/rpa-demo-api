@@ -33,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshTokenController = exports.loginController = exports.registerController = void 0;
+const client_1 = require("@prisma/client");
 const http_status_codes_1 = require("http-status-codes");
 const prismaErrorHandler_1 = require("../../utils/db/prismaErrorHandler");
 const http_exception_1 = require("../../utils/exceptions/http.exception");
@@ -43,7 +44,7 @@ const auth_service_1 = require("./auth.service");
 const jwt = __importStar(require("jsonwebtoken"));
 const registerController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield (0, user_service_1.createNewUser)(req.body);
+        const user = yield (0, user_service_1.createNewUser)(Object.assign(Object.assign({}, req.body), { lastLoginIp: req.ip }));
         const userCleaned = (0, user_service_1.cleanUserResponse)(user);
         return res.status(http_status_codes_1.StatusCodes.CREATED).json({
             code: http_status_codes_1.StatusCodes.OK,
@@ -100,10 +101,44 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.loginController = loginController;
 const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const refreshToken = req.body.refreshToken;
-    const publicKey = yield (0, jwt_utils_1.getPublicKey)();
-    const isRefreshTokenValid = jwt.verify(refreshToken, publicKey);
-    res.send(200);
+    try {
+        const refreshToken = req.body.refreshToken;
+        const publicKey = yield (0, jwt_utils_1.getPublicKey)();
+        const decodedToken = jwt.verify(refreshToken, publicKey);
+        const user = yield (0, user_service_1.getUserById)(decodedToken.id);
+        if (!user) {
+            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
+            next(customException);
+        }
+        const { id: userId } = user;
+        const newRefreshToken = yield (0, jwt_utils_1.createRefreshToken)({
+            id: userId,
+            ip: req.ip,
+            role: client_1.Role.USER,
+        });
+        yield (0, auth_service_1.updateRefreshToken)({ token: req.body.refreshToken }, {
+            revokedTime: new Date(),
+            revokedByIp: req.ip,
+            replacedByToken: newRefreshToken,
+        });
+        yield (0, auth_service_1.saveRefreshToken)({ token: newRefreshToken, userId });
+        const newAccessToken = yield (0, jwt_utils_1.createAccessToken)({
+            id: userId,
+            role: client_1.Role.USER,
+        });
+        res.status(http_status_codes_1.StatusCodes.OK).json({
+            code: http_status_codes_1.StatusCodes.OK,
+            result: "SUCCESS",
+            data: {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+            },
+        });
+    }
+    catch (error) {
+        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, "Unexpected error");
+        next(customException);
+    }
 });
 exports.refreshTokenController = refreshTokenController;
 //# sourceMappingURL=auth.controller.js.map

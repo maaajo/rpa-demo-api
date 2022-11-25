@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saveRefreshToken = void 0;
+exports.updateRefreshToken = exports.saveRefreshToken = void 0;
 const prisma_db_1 = require("../../db/prisma.db");
 const saveRefreshToken = (refreshTokenData) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_db_1.db.refreshToken.create({ data: refreshTokenData });
@@ -27,4 +27,5 @@ const updateRefreshToken = (findValues, dataToUpdate) => __awaiter(void 0, void 
         data: dataToUpdate,
     });
 });
+exports.updateRefreshToken = updateRefreshToken;
 //# sourceMappingURL=auth.service.js.map

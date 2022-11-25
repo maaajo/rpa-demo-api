@@ -4,7 +4,9 @@ import { db } from "../../db/prisma.db";
 type TRefreshTokenUniqueValues = Prisma.RefreshTokenFindUniqueArgs["where"];
 type TRefreshTokenInputData = Prisma.RefreshTokenCreateArgs["data"];
 
-const saveRefreshToken = async (refreshTokenData: TRefreshTokenInputData) => {
+const saveRefreshToken = async (
+  refreshTokenData: Prisma.RefreshTokenCreateArgs["data"]
+) => {
   return await db.refreshToken.create({ data: refreshTokenData });
 };
 
@@ -17,7 +19,7 @@ const getRefreshTokenUser = async (findValues: TRefreshTokenUniqueValues) => {
 
 const updateRefreshToken = async (
   findValues: TRefreshTokenUniqueValues,
-  dataToUpdate: TRefreshTokenInputData
+  dataToUpdate: Prisma.RefreshTokenUpdateArgs["data"]
 ) => {
   return await db.refreshToken.update({
     where: findValues,
@@ -25,4 +27,4 @@ const updateRefreshToken = async (
   });
 };
 
-export { saveRefreshToken };
+export { saveRefreshToken, updateRefreshToken };

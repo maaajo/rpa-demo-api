@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { Request, NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getPrismaErrorMessage } from "../../utils/db/prismaErrorHandler";
@@ -10,6 +10,7 @@ import {
   insertLastFailedAuthAttempt,
   insertSuccessAuthAttempt,
   cleanUserResponse,
+  getUserById,
 } from "../user/user.service";
 import {
   IJwtVerifyRefreshPayload,
@@ -22,7 +23,7 @@ import {
   createRefreshToken,
   getPublicKey,
 } from "../../utils/auth/jwt.utils";
-import { saveRefreshToken } from "./auth.service";
+import { saveRefreshToken, updateRefreshToken } from "./auth.service";
 import * as jwt from "jsonwebtoken";
 
 const registerController = async (
@@ -31,7 +32,7 @@ const registerController = async (
   next: NextFunction
 ) => {
   try {
-    const user = await createNewUser(req.body);
+    const user = await createNewUser({ ...req.body, lastLoginIp: req.ip });
 
     const userCleaned = cleanUserResponse(user);
 
@@ -117,19 +118,68 @@ const loginController = async (
 
 const refreshTokenController = async (
   req: Request<{}, {}, IRefreshRequest>,
-  res: Response,
+  res: ITypedResponse<{ accessToken: string; refreshToken: string }>,
   next: NextFunction
 ) => {
-  const refreshToken = req.body.refreshToken;
+  try {
+    const refreshToken = req.body.refreshToken;
 
-  const publicKey = await getPublicKey();
+    const publicKey = await getPublicKey();
 
-  const isRefreshTokenValid = jwt.verify(
-    refreshToken,
-    publicKey
-  ) as IJwtVerifyRefreshPayload;
+    const decodedToken = jwt.verify(
+      refreshToken,
+      publicKey
+    ) as IJwtVerifyRefreshPayload;
 
-  res.send(200);
+    const user = await getUserById(decodedToken.id);
+
+    if (!user) {
+      const customException = new CustomException(
+        StatusCodes.BAD_REQUEST,
+        "Invalid refresh token"
+      );
+      next(customException);
+    }
+
+    const { id: userId } = user!;
+
+    const newRefreshToken = await createRefreshToken({
+      id: userId,
+      ip: req.ip,
+      role: Role.USER,
+    });
+
+    await updateRefreshToken(
+      { token: req.body.refreshToken },
+      {
+        revokedTime: new Date(),
+        revokedByIp: req.ip,
+        replacedByToken: newRefreshToken,
+      }
+    );
+
+    await saveRefreshToken({ token: newRefreshToken, userId });
+
+    const newAccessToken = await createAccessToken({
+      id: userId,
+      role: Role.USER,
+    });
+
+    res.status(StatusCodes.OK).json({
+      code: StatusCodes.OK,
+      result: "SUCCESS",
+      data: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      },
+    });
+  } catch (error: any) {
+    const customException = new CustomException(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Unexpected error"
+    );
+    next(customException);
+  }
 };
 
 export { registerController, loginController, refreshTokenController };

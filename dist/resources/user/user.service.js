@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanUserResponse = exports.insertSuccessAuthAttempt = exports.insertLastFailedAuthAttempt = exports.getUserByEmail = exports.createNewUser = void 0;
+exports.getUserById = exports.cleanUserResponse = exports.insertSuccessAuthAttempt = exports.insertLastFailedAuthAttempt = exports.getUserByEmail = exports.createNewUser = void 0;
 const prisma_db_1 = require("../../db/prisma.db");
 const client_1 = require("@prisma/client");
 const excludeFieldsFromPrismaReturn_1 = require("../../utils/db/excludeFieldsFromPrismaReturn");
@@ -44,6 +44,10 @@ const createNewUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     return createdUser;
 });
 exports.createNewUser = createNewUser;
+const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_db_1.db.user.findUnique({ where: { id } });
+});
+exports.getUserById = getUserById;
 const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_db_1.db.user.findUnique({
         where: { email },
@@ -73,6 +77,7 @@ const cleanUserResponse = (user) => {
         "lastFailedLoggedDate",
         "lastSuccessfulLoggedDate",
         "role",
+        "lastLoginIp",
     ]);
 };
 exports.cleanUserResponse = cleanUserResponse;

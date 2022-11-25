@@ -17,6 +17,10 @@ const createNewUser = async (user: Prisma.UserCreateArgs["data"]) => {
   return createdUser;
 };
 
+const getUserById = async (id: string) => {
+  return await db.user.findUnique({ where: { id } });
+};
+
 const getUserByEmail = async (email: string) => {
   const result = await db.user.findUnique({
     where: { email },
@@ -47,6 +51,7 @@ const cleanUserResponse = (user: User) => {
     "lastFailedLoggedDate",
     "lastSuccessfulLoggedDate",
     "role",
+    "lastLoginIp",
   ]);
 };
 
@@ -56,4 +61,5 @@ export {
   insertLastFailedAuthAttempt,
   insertSuccessAuthAttempt,
   cleanUserResponse,
+  getUserById,
 };
