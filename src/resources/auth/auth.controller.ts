@@ -47,11 +47,13 @@ const registerController = async (
     });
   } catch (error: any) {
     const prismaErrorMessage = getPrismaErrorMessage(error);
-    const customException = new CustomException(
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      prismaErrorMessage || error
+
+    return next(
+      new CustomException(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        prismaErrorMessage || error
+      )
     );
-    return next(customException);
   }
 };
 
@@ -66,11 +68,9 @@ const loginController = async (
     const getUserResult = await getUserByEmail(providedEmail);
 
     if (!getUserResult) {
-      const customException = new CustomException(
-        StatusCodes.NOT_FOUND,
-        "Email not found"
+      return next(
+        new CustomException(StatusCodes.NOT_FOUND, "Email not found")
       );
-      return next(customException);
     }
 
     const { id: userId, role: userRole } = getUserResult;
@@ -82,11 +82,10 @@ const loginController = async (
 
     if (!isPasswordValid) {
       await insertLastFailedAuthAttempt(userId);
-      const customException = new CustomException(
-        StatusCodes.BAD_REQUEST,
-        "Invalid Password"
+
+      return next(
+        new CustomException(StatusCodes.BAD_REQUEST, "Invalid Password")
       );
-      return next(customException);
     }
 
     const accessToken = await createAccessToken({
@@ -112,11 +111,7 @@ const loginController = async (
       },
     });
   } catch (error: any) {
-    const customException = new CustomException(
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      error
-    );
-    return next(customException);
+    return next(new CustomException(StatusCodes.INTERNAL_SERVER_ERROR, error));
   }
 };
 
@@ -138,33 +133,27 @@ const refreshTokenController = async (
     const tokenDetails = await getRefreshTokenDetails({ token: refreshToken });
 
     if (!tokenDetails) {
-      const customException = new CustomException(
-        StatusCodes.BAD_REQUEST,
-        "Invalid refresh token"
+      return next(
+        new CustomException(StatusCodes.BAD_REQUEST, "Invalid refresh token")
       );
-      next(customException);
     } else {
       if (
         !tokenDetails.isActive ||
         tokenDetails.isExpired ||
         tokenDetails.revokedByIp
       ) {
-        const customException = new CustomException(
-          StatusCodes.BAD_REQUEST,
-          "Invalid refresh token"
+        return next(
+          new CustomException(StatusCodes.BAD_REQUEST, "Invalid refresh token")
         );
-        next(customException);
       }
     }
 
     const user = await getUserById(decodedToken.id);
 
     if (!user) {
-      const customException = new CustomException(
-        StatusCodes.BAD_REQUEST,
-        "Invalid refresh token"
+      return next(
+        new CustomException(StatusCodes.BAD_REQUEST, "Invalid refresh token")
       );
-      next(customException);
     }
 
     const { id: userId } = user!;
@@ -202,11 +191,9 @@ const refreshTokenController = async (
       },
     });
   } catch (error: any) {
-    const customException = new CustomException(
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "Unexpected error"
+    return next(
+      new CustomException(StatusCodes.INTERNAL_SERVER_ERROR, "Unexpected error")
     );
-    next(customException);
   }
 };
 

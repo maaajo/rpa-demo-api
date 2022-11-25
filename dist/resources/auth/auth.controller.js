@@ -54,8 +54,7 @@ const registerController = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
     catch (error) {
         const prismaErrorMessage = (0, prismaErrorHandler_1.getPrismaErrorMessage)(error);
-        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, prismaErrorMessage || error);
-        return next(customException);
+        return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, prismaErrorMessage || error));
     }
 });
 exports.registerController = registerController;
@@ -64,15 +63,13 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { email: providedEmail, password: providedPassword } = req.body;
         const getUserResult = yield (0, user_service_1.getUserByEmail)(providedEmail);
         if (!getUserResult) {
-            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.NOT_FOUND, "Email not found");
-            return next(customException);
+            return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.NOT_FOUND, "Email not found"));
         }
         const { id: userId, role: userRole } = getUserResult;
         const isPasswordValid = yield bcrypt.compare(providedPassword, getUserResult.password);
         if (!isPasswordValid) {
             yield (0, user_service_1.insertLastFailedAuthAttempt)(userId);
-            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid Password");
-            return next(customException);
+            return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid Password"));
         }
         const accessToken = yield (0, jwt_utils_1.createAccessToken)({
             id: userId,
@@ -95,8 +92,7 @@ const loginController = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (error) {
-        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, error);
-        return next(customException);
+        return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, error));
     }
 });
 exports.loginController = loginController;
@@ -107,21 +103,18 @@ const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, voi
         const decodedToken = jwt.verify(refreshToken, publicKey);
         const tokenDetails = yield (0, auth_service_1.getRefreshTokenDetails)({ token: refreshToken });
         if (!tokenDetails) {
-            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
-            next(customException);
+            return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token"));
         }
         else {
             if (!tokenDetails.isActive ||
                 tokenDetails.isExpired ||
                 tokenDetails.revokedByIp) {
-                const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
-                next(customException);
+                return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token"));
             }
         }
         const user = yield (0, user_service_1.getUserById)(decodedToken.id);
         if (!user) {
-            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
-            next(customException);
+            return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token"));
         }
         const { id: userId } = user;
         const newRefreshToken = yield (0, jwt_utils_1.createRefreshToken)({
@@ -151,8 +144,7 @@ const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, voi
         });
     }
     catch (error) {
-        const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, "Unexpected error");
-        next(customException);
+        return next(new http_exception_1.CustomException(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, "Unexpected error"));
     }
 });
 exports.refreshTokenController = refreshTokenController;
