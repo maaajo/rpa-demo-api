@@ -9,18 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateRefreshToken = exports.saveRefreshToken = void 0;
+exports.getRefreshTokenDetails = exports.updateRefreshToken = exports.saveRefreshToken = void 0;
 const prisma_db_1 = require("../../db/prisma.db");
 const saveRefreshToken = (refreshTokenData) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_db_1.db.refreshToken.create({ data: refreshTokenData });
 });
 exports.saveRefreshToken = saveRefreshToken;
-const getRefreshTokenUser = (findValues) => __awaiter(void 0, void 0, void 0, function* () {
+const getRefreshTokenDetails = (findValues) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_db_1.db.refreshToken.findUnique({
         where: findValues,
-        select: { user: true },
     });
 });
+exports.getRefreshTokenDetails = getRefreshTokenDetails;
 const updateRefreshToken = (findValues, dataToUpdate) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_db_1.db.refreshToken.update({
         where: findValues,

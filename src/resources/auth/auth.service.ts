@@ -10,10 +10,11 @@ const saveRefreshToken = async (
   return await db.refreshToken.create({ data: refreshTokenData });
 };
 
-const getRefreshTokenUser = async (findValues: TRefreshTokenUniqueValues) => {
+const getRefreshTokenDetails = async (
+  findValues: TRefreshTokenUniqueValues
+) => {
   return await db.refreshToken.findUnique({
     where: findValues,
-    select: { user: true },
   });
 };
 
@@ -27,4 +28,4 @@ const updateRefreshToken = async (
   });
 };
 
-export { saveRefreshToken, updateRefreshToken };
+export { saveRefreshToken, updateRefreshToken, getRefreshTokenDetails };

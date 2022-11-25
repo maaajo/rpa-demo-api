@@ -23,7 +23,11 @@ import {
   createRefreshToken,
   getPublicKey,
 } from "../../utils/auth/jwt.utils";
-import { saveRefreshToken, updateRefreshToken } from "./auth.service";
+import {
+  getRefreshTokenDetails,
+  saveRefreshToken,
+  updateRefreshToken,
+} from "./auth.service";
 import * as jwt from "jsonwebtoken";
 
 const registerController = async (
@@ -131,6 +135,28 @@ const refreshTokenController = async (
       publicKey
     ) as IJwtVerifyRefreshPayload;
 
+    const tokenDetails = await getRefreshTokenDetails({ token: refreshToken });
+
+    if (!tokenDetails) {
+      const customException = new CustomException(
+        StatusCodes.BAD_REQUEST,
+        "Invalid refresh token"
+      );
+      next(customException);
+    } else {
+      if (
+        !tokenDetails.isActive ||
+        tokenDetails.isExpired ||
+        tokenDetails.revokedByIp
+      ) {
+        const customException = new CustomException(
+          StatusCodes.BAD_REQUEST,
+          "Invalid refresh token"
+        );
+        next(customException);
+      }
+    }
+
     const user = await getUserById(decodedToken.id);
 
     if (!user) {
@@ -149,21 +175,23 @@ const refreshTokenController = async (
       role: Role.USER,
     });
 
-    await updateRefreshToken(
-      { token: req.body.refreshToken },
-      {
-        revokedTime: new Date(),
-        revokedByIp: req.ip,
-        replacedByToken: newRefreshToken,
-      }
-    );
-
-    await saveRefreshToken({ token: newRefreshToken, userId });
-
     const newAccessToken = await createAccessToken({
       id: userId,
       role: Role.USER,
     });
+
+    await updateRefreshToken(
+      { token: refreshToken },
+      {
+        revokedTime: new Date(),
+        revokedByIp: req.ip,
+        replacedByToken: newRefreshToken,
+        isExpired: true,
+        isActive: false,
+      }
+    );
+
+    await saveRefreshToken({ token: newRefreshToken, userId });
 
     res.status(StatusCodes.OK).json({
       code: StatusCodes.OK,

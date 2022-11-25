@@ -105,6 +105,19 @@ const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, voi
         const refreshToken = req.body.refreshToken;
         const publicKey = yield (0, jwt_utils_1.getPublicKey)();
         const decodedToken = jwt.verify(refreshToken, publicKey);
+        const tokenDetails = yield (0, auth_service_1.getRefreshTokenDetails)({ token: refreshToken });
+        if (!tokenDetails) {
+            const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
+            next(customException);
+        }
+        else {
+            if (!tokenDetails.isActive ||
+                tokenDetails.isExpired ||
+                tokenDetails.revokedByIp) {
+                const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
+                next(customException);
+            }
+        }
         const user = yield (0, user_service_1.getUserById)(decodedToken.id);
         if (!user) {
             const customException = new http_exception_1.CustomException(http_status_codes_1.StatusCodes.BAD_REQUEST, "Invalid refresh token");
@@ -116,16 +129,18 @@ const refreshTokenController = (req, res, next) => __awaiter(void 0, void 0, voi
             ip: req.ip,
             role: client_1.Role.USER,
         });
-        yield (0, auth_service_1.updateRefreshToken)({ token: req.body.refreshToken }, {
-            revokedTime: new Date(),
-            revokedByIp: req.ip,
-            replacedByToken: newRefreshToken,
-        });
-        yield (0, auth_service_1.saveRefreshToken)({ token: newRefreshToken, userId });
         const newAccessToken = yield (0, jwt_utils_1.createAccessToken)({
             id: userId,
             role: client_1.Role.USER,
         });
+        yield (0, auth_service_1.updateRefreshToken)({ token: refreshToken }, {
+            revokedTime: new Date(),
+            revokedByIp: req.ip,
+            replacedByToken: newRefreshToken,
+            isExpired: true,
+            isActive: false,
+        });
+        yield (0, auth_service_1.saveRefreshToken)({ token: newRefreshToken, userId });
         res.status(http_status_codes_1.StatusCodes.OK).json({
             code: http_status_codes_1.StatusCodes.OK,
             result: "SUCCESS",
